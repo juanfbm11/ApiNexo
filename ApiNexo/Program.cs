@@ -1,5 +1,6 @@
 
 using ApiNexo.Repository.Implements;
+using ApiNexo.Repository.Implements.TuProyecto.Repositories.Implements;
 using ApiNexo.Repository.Repository;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -38,8 +39,11 @@ namespace ApiNexo
             builder.Services.AddTransient<IProductoQueries, ProductoQueries>();
             builder.Services.AddTransient<IMunicipioRepository,MunicipioRepository >();
             builder.Services.AddTransient<IMunicipioQueries, MunicipioQueries>();
+            builder.Services.AddTransient<ICategoriaQueries, CategoriaQueries>();
+            builder.Services.AddTransient<ICategoriaRepository, CategoriaRepository>();
 
-            
+
+
 
             //builder.Services.AddOpenApi();
 
