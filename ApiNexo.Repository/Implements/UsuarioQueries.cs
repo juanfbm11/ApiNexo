@@ -1,0 +1,57 @@
+﻿using ApiNexo.Models;
+using ApiNexo.Repository.Repository;
+using Dapper.Contrib.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Threading.Tasks;
+
+namespace ApiNexo.Repository.Implements
+{
+    public class UsuarioQueries : IUsuarioQueries
+    {
+        private readonly IDbConnection _db;
+
+        public UsuarioQueries(IDbConnection db)
+        {
+            _db = db ?? throw new ArgumentNullException(nameof(db));
+        }
+
+        public async Task<Usuario> Add(Usuario usuario)
+        {
+            try
+            {
+                usuario.Id = await _db.InsertAsync(usuario);
+                return usuario;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al insertar el usuario: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<bool> Delete(int id)
+        {
+            var usuario = await GetById(id);
+            if (usuario == null)
+                return false;
+            return await _db.DeleteAsync(usuario);
+        }
+
+        public async Task<IEnumerable<Usuario>> GetAll()
+        {
+            return await _db.GetAllAsync<Usuario>();
+        }
+
+        public async Task<Usuario> GetById(int id)
+        {
+            return await _db.GetAsync<Usuario>(id);
+        }
+
+        public async Task<bool> Update(Usuario usuario)
+        {
+            return await _db.UpdateAsync(usuario);
+        }
+    }
+}
+

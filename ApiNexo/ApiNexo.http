@@ -1,0 +1,6 @@
+@ApiNexo_HostAddress = http://localhost:5080
+
+GET {{ApiNexo_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
