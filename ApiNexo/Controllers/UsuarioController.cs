@@ -30,9 +30,16 @@ namespace ApiNexo.Controllers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         /// <summary>
-        /// 
+        /// Obtiene la lista completa de usuarios registrados en el sistema.
         /// </summary>
-        /// <returns></returns>
+        /// <remarks>
+        /// Este endpoint devuelve todos los usuarios almacenados en la base de datos.
+        /// </remarks>
+        /// <returns>
+        /// Devuelve un código de estado 200 (OK) con la lista de usuarios si la operación es exitosa.
+        /// </returns>
+        /// <response code="200">Devuelve la lista de usuarios registrados.</response>
+        /// <response code="500">Error interno del servidor al intentar obtener los usuarios.</response>
         [HttpGet]
         public async Task<IActionResult> Listar()
         {
@@ -49,10 +56,19 @@ namespace ApiNexo.Controllers
             }
         }
         /// <summary>
-        /// 
+        /// Obtiene la información detallada de un usuario específico a partir de su identificador único (ID).
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Identificador único del usuario que se desea consultar.</param>
+        /// <remarks>
+        /// Este endpoint permite recuperar los datos completos de un usuario existente en el sistema 
+        /// mediante su ID. Si el usuario no existe, se devuelve un mensaje indicando que no fue encontrado.
+        /// </remarks>
+        /// <returns>
+        /// Devuelve un código de estado 200 (OK) junto con la información del usuario si se encuentra.
+        /// </returns>
+        /// <response code="200">Devuelve los datos del usuario solicitado.</response>
+        /// <response code="404">El usuario no fue encontrado en la base de datos.</response>
+        /// <response code="500">Error interno del servidor al intentar obtener el usuario.</response>
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -61,7 +77,7 @@ namespace ApiNexo.Controllers
                 var usuario = await _usuarioQueries.GetById(id); 
                 if (usuario == null)
                     return NotFound("El usuario no fue encontrado");
-                return Ok(usuario); // Retornar el usuario encontrado
+                return Ok(usuario); 
             }
             catch (Exception ex)
             {
@@ -70,10 +86,20 @@ namespace ApiNexo.Controllers
             }
         }
         /// <summary>
-        /// 
+        /// Crea un nuevo usuario en el sistema con la información proporcionada en el cuerpo de la solicitud.
         /// </summary>
-        /// <param name="usuario"></param>
-        /// <returns></returns>
+        /// <param name="usuario">Objeto que contiene los datos del usuario a registrar.</param>
+        /// <remarks>
+        /// Este endpoint permite registrar un nuevo usuario en la base de datos.  
+        /// Si la operación es exitosa, devuelve la ubicación del nuevo recurso creado junto con su identificador.
+        /// </remarks>
+        /// <returns>
+        /// Devuelve un código de estado 201 (Created) si el usuario se crea correctamente,
+        /// o un mensaje de error si ocurre algún problema durante la creación.
+        /// </returns>
+        /// <response code="201">Usuario creado correctamente.</response>
+        /// <response code="400">Los datos proporcionados no son válidos.</response>
+        /// <response code="500">Error interno del servidor al intentar crear el usuario.</response>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Usuario usuario)
         {
@@ -91,11 +117,22 @@ namespace ApiNexo.Controllers
             }
         }
         /// <summary>
-        /// 
+        /// Actualiza la información de un usuario existente en el sistema.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="usuario"></param>
-        /// <returns></returns>
+        /// <param name="id">Identificador único del usuario que se desea actualizar.</param>
+        /// <param name="usuario">Objeto que contiene los nuevos datos del usuario.</param>
+        /// <remarks>
+        /// Este endpoint permite modificar la información de un usuario existente.  
+        /// El ID proporcionado en la URL debe coincidir con el ID del objeto usuario enviado en el cuerpo de la solicitud.
+        /// </remarks>
+        /// <returns>
+        /// Devuelve un código de estado 200 (OK) si la actualización es exitosa,  
+        /// 404 (NotFound) si el usuario no existe o si los IDs no coinciden,  
+        /// y 500 (Internal Server Error) si ocurre un error inesperado.
+        /// </returns>
+        /// <response code="200">El usuario fue actualizado correctamente.</response>
+        /// <response code="404">El usuario no fue encontrado o los IDs no coinciden.</response>
+        /// <response code="500">Error interno del servidor al intentar actualizar el usuario.</response>
         [HttpPut]
         public async Task<IActionResult> Put(int id, [FromBody]Usuario usuario)
         {
@@ -119,10 +156,21 @@ namespace ApiNexo.Controllers
             }
         }
         /// <summary>
-        /// 
+        /// Elimina un usuario existente del sistema utilizando la información proporcionada en el cuerpo de la solicitud.
         /// </summary>
-        /// <param name="usuario"></param>
-        /// <returns></returns>
+        /// <param name="usuario">Objeto que contiene los datos del usuario que se desea eliminar.</param>
+        /// <remarks>
+        /// Este endpoint permite eliminar un usuario de la base de datos.  
+        /// Se debe enviar el objeto del usuario que se desea eliminar en el cuerpo de la solicitud.
+        /// </remarks>
+        /// <returns>
+        /// Devuelve un código de estado 200 (OK) si el usuario se elimina correctamente,  
+        /// 404 (NotFound) si no se encuentra el usuario,  
+        /// y 500 (Internal Server Error) si ocurre un error durante el proceso.
+        /// </returns>
+        /// <response code="200">El usuario ha sido eliminado exitosamente.</response>
+        /// <response code="404">El usuario no fue encontrado en la base de datos.</response>
+        /// <response code="500">Error interno del servidor al intentar eliminar el usuario.</response>
         [HttpDelete]
         public async Task<IActionResult> Delete(Usuario usuario)
         {

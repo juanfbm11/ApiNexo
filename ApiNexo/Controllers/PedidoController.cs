@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace ApiNexo.Controllers
 {
     /// <summary>
-    /// 
+    /// Controlador encargado de manejar las operaciones relacionadas con los pedidos.
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
@@ -23,11 +23,12 @@ namespace ApiNexo.Controllers
 
 
         /// <summary>
-        /// 
+        /// /// Inicializa una nueva instancia del, inyectando las dependencias
+        /// necesarias para manejar las operaciones de pedidos y registrar información del sistema.
         /// </summary>
-        /// <param name="pedidoRepository"></param>
-        /// <param name="pedidoQueries"></param>
-        /// <param name="logger"></param>
+        /// <param name="pedidoRepository">Interfaz para realizar operaciones CRUD sobre los pedidos.</param>
+        /// <param name="pedidoQueries">Interfaz para ejecutar consultas y obtener información de los pedidos.<param>
+        /// <param name="logger">Componente utilizado para registrar información, advertencias y errores del controlador.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public PedidoController(IPedidoRepository pedidoRepository, IPedidoQueries pedidoQueries, ILogger<PedidoController> logger)
         {
@@ -37,10 +38,11 @@ namespace ApiNexo.Controllers
         }
 
         /// <summary>
-        /// 
+        ///  Obtiene la lista de pedidos asociados a un usuario específico, 
+        /// identificándolo por su ID.
         /// </summary>
-        /// <param name="idUsuario"></param>
-        /// <returns></returns>
+        /// <param name="idUsuario">Identificador único del usuario cuyos pedidos se desean consultar.</param>
+        /// <returns>Devuelve una lista de pedidos pertenecientes al usuario o un mensaje si no se encuentran resultados.</returns>
         [HttpGet]
         public async Task<IActionResult> ObtenerPedidosPorUsuario([FromQuery] int idUsuario)
         {
@@ -60,10 +62,10 @@ namespace ApiNexo.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Obtiene la información detallada de un pedido específico utilizando su identificador único (ID).
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Identificador único del pedido que se desea consultar.</param>
+        /// <returns>Devuelve los datos del pedido si existe o un mensaje indicando que no fue encontrado.</returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> ObtenerPedido(int id)
         {
@@ -83,10 +85,10 @@ namespace ApiNexo.Controllers
         }
 
         /// <summary>
-        /// 
+        ///  Crea un nuevo pedido en el sistema con la información proporcionada en el cuerpo de la solicitud.
         /// </summary>
         /// <param name="pedido"></param>
-        /// <returns></returns>
+        /// <returns>Devuelve un código de estado 201 si el pedido se crea correctamente o un mensaje de error en caso contrario.</returns>
         [HttpPost]
         public IActionResult CrearPedido([FromBody] Pedido pedido)
         {
@@ -136,10 +138,10 @@ namespace ApiNexo.Controllers
             }
         }
         /// <summary>
-        /// 
+        ///  Elimina un pedido existente del sistema utilizando su identificador único (ID).
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
+        /// <returns>Devuelve un mensaje de confirmación si el pedido se elimina correctamente o un error si no se encuentra.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> EliminarPedido(int id)
         {
