@@ -80,7 +80,7 @@ namespace ApiNexo.Controllers
             /// <response code="204">Categoría eliminada correctamente.</response>
             /// <response code="404">Categoría no encontrada.</response>
             [HttpDelete("{id}")]
-            ///preguntar por return despues de eliminar...linea 89
+            
           
             public async Task<IActionResult> Delete(int id)
             {

@@ -27,9 +27,9 @@ namespace ApiNexo.Controllers
         /// necesarias para manejar las operaciones de pedidos y registrar información del sistema.
         /// </summary>
         /// <param name="pedidoRepository">Interfaz para realizar operaciones CRUD sobre los pedidos.</param>
-        /// <param name="pedidoQueries">Interfaz para ejecutar consultas y obtener información de los pedidos.<param>
-        /// <param name="logger">Componente utilizado para registrar información, advertencias y errores del controlador.</param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <param name="pedidoQueries">Interfaz para ejecutar consultas y obtener información de los pedidos.</param>
+        /// <param name="logger">Componente utilizado para registrar información, advertencias y errores del controlador</param>
+        /// <exception cref="ArgumentNullException"></exception>       
         public PedidoController(IPedidoRepository pedidoRepository, IPedidoQueries pedidoQueries, ILogger<PedidoController> logger)
         {
             _pedidoRepository = pedidoRepository ?? throw new ArgumentNullException(nameof(pedidoRepository));

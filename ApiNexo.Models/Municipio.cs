@@ -28,4 +28,4 @@ namespace ApiNexo.Models
         public string CodigoDane { get; set; } = string.Empty;
     }
 }
-}
+
