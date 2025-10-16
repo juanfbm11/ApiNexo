@@ -41,6 +41,8 @@ namespace ApiNexo.Controllers
         /// <response code="200">Devuelve la lista de usuarios registrados.</response>
         /// <response code="500">Error interno del servidor al intentar obtener los usuarios.</response>
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Usuario>),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Usuario>),StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Listar()
         {
             try
@@ -70,13 +72,18 @@ namespace ApiNexo.Controllers
         /// <response code="404">El usuario no fue encontrado en la base de datos.</response>
         /// <response code="500">Error interno del servidor al intentar obtener el usuario.</response>
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<Usuario>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Usuario>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IEnumerable<Usuario>), StatusCodes.Status500InternalServerError)]
+
+
         public async Task<IActionResult> Get(int id)
         {
             try
             {
                 var usuario = await _usuarioQueries.GetById(id); 
                 if (usuario == null)
-                    return NotFound("El usuario no fue encontrado");
+                    return StatusCode(StatusCodes.Status404NotFound, "El usuario no fue encontrado");
                 return Ok(usuario); 
             }
             catch (Exception ex)
@@ -101,6 +108,9 @@ namespace ApiNexo.Controllers
         /// <response code="400">Los datos proporcionados no son válidos.</response>
         /// <response code="500">Error interno del servidor al intentar crear el usuario.</response>
         [HttpPost]
+        [ProducesResponseType(typeof(IEnumerable<Usuario>),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Usuario>),StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IEnumerable<Usuario>),StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] Usuario usuario)
         {
             try
@@ -131,9 +141,12 @@ namespace ApiNexo.Controllers
         /// y 500 (Internal Server Error) si ocurre un error inesperado.
         /// </returns>
         /// <response code="200">El usuario fue actualizado correctamente.</response>
-        /// <response code="404">El usuario no fue encontrado o los IDs no coinciden.</response>
+        /// <response code="400">El usuario no fue encontrado o los IDs no coinciden.</response>
         /// <response code="500">Error interno del servidor al intentar actualizar el usuario.</response>
         [HttpPut]
+        [ProducesResponseType(typeof(IEnumerable<Usuario>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Usuario>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IEnumerable<Usuario>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Put(int id, [FromBody]Usuario usuario)
         {
             try
@@ -143,7 +156,7 @@ namespace ApiNexo.Controllers
 
                 var rs = await _usuarioRepository.Update(usuario);
                 if (!rs)
-                    return StatusCode(StatusCodes.Status404NotFound, "No se encontró el usuario con el ID especificado");
+                    return StatusCode(StatusCodes.Status400BadRequest, "No se encontró el usuario con el ID especificado");
 
                 return StatusCode(StatusCodes.Status200OK, "El usuario fue actualizado correctamente.");
 
@@ -172,13 +185,16 @@ namespace ApiNexo.Controllers
         /// <response code="404">El usuario no fue encontrado en la base de datos.</response>
         /// <response code="500">Error interno del servidor al intentar eliminar el usuario.</response>
         [HttpDelete]
+        [ProducesResponseType(typeof(IEnumerable<Usuario>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Usuario>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IEnumerable<Usuario>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete(Usuario usuario)
         {
             try
             {
                 var rs = await _usuarioRepository.Delete(usuario);
                 if (!rs)
-                    return StatusCode(StatusCodes.Status404NotFound, "El usuario no fue encontrado.");
+                    return StatusCode(StatusCodes.Status400BadRequest, "El usuario no fue encontrado.");
 
                 return StatusCode(StatusCodes.Status200OK, "El usuario ha sido eliminado exitosamente.");
 

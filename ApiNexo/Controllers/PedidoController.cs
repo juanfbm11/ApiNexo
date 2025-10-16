@@ -44,13 +44,15 @@ namespace ApiNexo.Controllers
         /// <param name="idUsuario">Identificador único del usuario cuyos pedidos se desean consultar.</param>
         /// <returns>Devuelve una lista de pedidos pertenecientes al usuario o un mensaje si no se encuentran resultados.</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status200OK)]       
+        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ObtenerPedidosPorUsuario([FromQuery] int idUsuario)
         {
             try
             {
                 var pedidos = await _pedidoQueries.ObtenerPedidosPorUsuario(idUsuario);
                 if (pedidos == null || !pedidos.Any())
-                    return NotFound("No se encontraron pedidos para este usuario");
+                    return StatusCode(StatusCodes.Status404NotFound, "No se encontraron pedidos para este usuario");
 
                 return Ok(pedidos);
             }
@@ -67,13 +69,15 @@ namespace ApiNexo.Controllers
         /// <param name="id">Identificador único del pedido que se desea consultar.</param>
         /// <returns>Devuelve los datos del pedido si existe o un mensaje indicando que no fue encontrado.</returns>
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ObtenerPedido(int id)
         {
             try
             {
                 var pedido = await _pedidoQueries.ObtenerPedidoPorId(id);
                 if (pedido == null)
-                    return NotFound("Pedido no encontrado");
+                    return StatusCode(StatusCodes.Status404NotFound, "Pedido no encontrado");
 
                 return Ok(pedido);
             }
@@ -90,12 +94,14 @@ namespace ApiNexo.Controllers
         /// <param name="pedido"></param>
         /// <returns>Devuelve un código de estado 201 si el pedido se crea correctamente o un mensaje de error en caso contrario.</returns>
         [HttpPost]
+        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status201Created)]        
+        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status500InternalServerError)]
         public IActionResult CrearPedido([FromBody] Pedido pedido)
         {
             try
             {
                 if (pedido == null)
-                    return BadRequest("Datos inválidos");
+                    return StatusCode(StatusCodes.Status400BadRequest,"Datos inválidos");
 
                 _pedidoRepository.CrearPedido(pedido);
                 return StatusCode(StatusCodes.Status201Created, "Pedido creado correctamente");
@@ -113,23 +119,26 @@ namespace ApiNexo.Controllers
         /// <param name="pedido">Objeto con los datos actualizados del pedido</param>
         /// <returns>Resultado de la operación</returns>
         [HttpPut("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ActualizarPedido(int id, [FromBody] Pedido pedido)
         {
             try
             {
                 if (id != pedido.IdPedido)
-                    return BadRequest("El ID de la URL no coincide con el del pedido enviado.");
+                    return StatusCode(StatusCodes.Status400BadRequest,"El ID de la URL no coincide con el del pedido enviado.");
 
                 var pedidoExistente = await _pedidoQueries.ObtenerPedidoPorId(id);
                 if (pedidoExistente == null)
-                    return NotFound("Pedido no encontrado.");
+                    return StatusCode(StatusCodes.Status400BadRequest,"Pedido no encontrado.");
 
                 pedidoExistente.usuarioId = pedido.usuarioId;
                 pedidoExistente.Fecha = pedido.Fecha;
 
                 await _pedidoRepository.ActualizarPedido(pedidoExistente);
 
-                return Ok("Pedido actualizado correctamente.");
+                return StatusCode(StatusCodes.Status201Created,"Pedido actualizado correctamente.");
             }
             catch (Exception ex)
             {
@@ -143,16 +152,19 @@ namespace ApiNexo.Controllers
         /// <param name="id"></param>
         /// <returns>Devuelve un mensaje de confirmación si el pedido se elimina correctamente o un error si no se encuentra.</returns>
         [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> EliminarPedido(int id)
         {
             try
             {
                 var pedido = await _pedidoQueries.ObtenerPedidoPorId(id);
                 if (pedido == null)
-                    return NotFound("Pedido no encontrado");
+                    return StatusCode(StatusCodes.Status400BadRequest,"Pedido no encontrado");
 
                 await _pedidoRepository.EliminarPedido(id);
-                return Ok("Pedido eliminado correctamente");
+                return StatusCode(StatusCodes.Status200OK,"Pedido eliminado correctamente");
             }
             catch (Exception ex)
             {

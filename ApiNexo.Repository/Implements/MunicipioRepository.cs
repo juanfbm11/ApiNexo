@@ -1,5 +1,6 @@
 ﻿using ApiNexo.Models;
 using ApiNexo.Repository.Repository;
+using Dapper.Contrib.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,9 +17,28 @@ namespace ApiNexo.Repository.Implements
             _db=db ?? throw new ArgumentNullException(nameof(db));
         }
 
-        public Task<Municipio> Add(Municipio municipio)
+        public async Task<Municipio> Add(Municipio municipio)
         {
-            throw new NotImplementedException();
+            if(municipio == null)
+                throw new ArgumentNullException(nameof(municipio));
+            var id = await _db.InsertAsync(municipio);
+            municipio.Id = (int)id;
+            return municipio;
+        }
+
+        public async Task<bool> Update(Municipio municipio)
+        {
+            if(municipio == null)
+                throw new ArgumentNullException(nameof(municipio));
+            return await _db.UpdateAsync(municipio);
+        }
+
+        public async Task<bool> Delete(int id)
+        {
+            var municipio = await _db.GetAsync<Municipio>(id);
+            if(municipio == null)
+                return false;
+            return await _db.DeleteAsync(municipio);
         }
     }
 }

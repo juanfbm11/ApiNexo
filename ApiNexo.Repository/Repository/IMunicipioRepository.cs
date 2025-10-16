@@ -9,5 +9,7 @@ namespace ApiNexo.Repository.Repository
     public interface IMunicipioRepository
     {
         Task<Municipio> Add(Municipio municipio);
+        Task<bool> Update(Municipio municipio);
+        Task<bool> Delete(int id);
     }
 }

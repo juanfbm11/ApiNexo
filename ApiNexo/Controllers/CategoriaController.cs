@@ -1,5 +1,6 @@
 ﻿using ApiNexo.Models;
 using ApiNexo.Repository.Repository;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiNexo.Controllers
@@ -37,10 +38,12 @@ namespace ApiNexo.Controllers
             /// <response code="201">Categoría creada correctamente.</response>
             /// <response code="400">Datos inválidos enviados en la solicitud.</response>
             [HttpPost]
+            [ProducesResponseType(typeof(IEnumerable<Categoria>), StatusCodes.Status200OK)]
+            [ProducesResponseType(typeof(IEnumerable<Categoria>), StatusCodes.Status400BadRequest)]
             public async Task<ActionResult<Categoria>> Add([FromBody] Categoria categoria)
             {
                 if (categoria == null)
-                    return BadRequest("Los datos de la categoría son inválidos.");
+                    return StatusCode(StatusCodes.Status400BadRequest,"Los datos de la categoría son inválidos.");
 
                 var creada = await _categoriaRepository.Add(categoria);
                 return CreatedAtAction(nameof(GetAll), new { id = creada.IdCategoria }, creada);
@@ -55,6 +58,9 @@ namespace ApiNexo.Controllers
             /// <response code="400">El ID no coincide con la solicitud.</response>
             /// <response code="404">Categoría no encontrada.</response>
             [HttpPut("{id}")]
+            [ProducesResponseType(typeof(IEnumerable<DetallePedido>), StatusCodes.Status204NoContent)]
+            [ProducesResponseType(typeof(IEnumerable<DetallePedido>), StatusCodes.Status400BadRequest)]
+            [ProducesResponseType(typeof(IEnumerable<DetallePedido>), StatusCodes.Status404NotFound)]
             public async Task<IActionResult> Update(int id, [FromBody] Categoria categoria)
             {
                 if (id != categoria.IdCategoria)
@@ -74,10 +80,13 @@ namespace ApiNexo.Controllers
             /// <response code="204">Categoría eliminada correctamente.</response>
             /// <response code="404">Categoría no encontrada.</response>
             [HttpDelete("{id}")]
+            ///preguntar por return despues de eliminar...linea 89
+          
             public async Task<IActionResult> Delete(int id)
             {
                 var categoria = new Categoria { IdCategoria = id };
                 var eliminado = await _categoriaRepository.Delete(categoria);
+                //return Ok();
 
                 if (!eliminado)
                     return NotFound("La categoría no fue encontrada.");

@@ -27,6 +27,8 @@ namespace ApiNexo.Controllers
         /// </summary>
         /// <returns>Lista de DetallePedido</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<DetallePedido>), StatusCodes.Status200OK)]
+        
         public async Task<IActionResult> Get()
         {
             var detalles = await _repo.GetAll();
@@ -38,6 +40,7 @@ namespace ApiNexo.Controllers
         /// <param name="detalle">Objeto DetallePedido con la información a registrar</param>
         /// <returns>El detalle creado con su Id generado</returns>
         [HttpPost]
+        [ProducesResponseType(typeof(IEnumerable<DetallePedido>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Post(DetallePedido detalle)
         {
             var result = await _repo.Add(detalle);

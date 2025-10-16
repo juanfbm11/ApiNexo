@@ -6,9 +6,7 @@ using System.Net.NetworkInformation;
 
 namespace ApiNexo.Controllers
 {
-    /// <summary>
-    /// 
-    /// </summary>
+    
     [Route("api/[controller]")]
     [ApiController]
     public class ProductoController : ControllerBase
@@ -16,13 +14,13 @@ namespace ApiNexo.Controllers
        private readonly IProductoRepository _productoRepository;
          private readonly IProductoQueries _productoQueries;
         private readonly ILogger<ProductoController> _logger;
+
         /// <summary>
-        /// 
+        /// Inicializa una nueva instancia de la clase <see cref="ProductoController"/>.
         /// </summary>
-        /// <param name="productoRepository"></param>
-        /// <param name="productoQueries"></param>
-        /// <param name="logger"></param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <param name="productoRepository">Repositorio de productos.</param>
+        /// <param name="productoQueries">Consultas de productos.</param>
+        /// <param name="logger">Logger para registrar información y errores.</param>
         public ProductoController(IProductoRepository productoRepository, IProductoQueries productoQueries, ILogger<ProductoController> logger)
         {
             _productoRepository = productoRepository ?? throw new ArgumentNullException(nameof(productoRepository));
@@ -30,15 +28,23 @@ namespace ApiNexo.Controllers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         }
-        ///
+
+        /// <summary>
+        /// Obtiene una lista de todos los productos.
+        /// </summary>
+        /// <returns>Una lista de productos.</returns>
+        /// <response code="200">Devuelve la lista de productos.</response>
+        /// <response code="500">Error interno del servidor.</response>
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status200OK)]        
+        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Listar()
         {
             try
             {
                 _logger.LogInformation("Consultando todos los productos");
                 var rs = await _productoQueries.Getall();
-                return Ok(rs);
+                return StatusCode(StatusCodes.Status200OK,rs);
 
             }
             catch (Exception ex)
@@ -47,20 +53,27 @@ namespace ApiNexo.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
         /// <summary>
-        /// 
+        /// Obtiene un producto por su ID.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">ID del producto.</param>
+        /// <returns>El producto correspondiente al ID.</returns>
+        /// <response code="200">Devuelve el producto encontrado.</response>
+        /// <response code="400">El producto no fue encontrado.</response>
+        /// <response code="500">Error interno del servidor.</response>
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(int id)
         {
             try
             {
                 var producto =  await _productoQueries.GetById(id);
                 if (producto == null)               
-                    return NotFound("el producto no fue encontrado");
-                return Ok(producto); 
+                    return StatusCode(StatusCodes.Status400BadRequest, "el producto no fue encontrado");
+                return StatusCode(StatusCodes.Status200OK,producto); 
             }
             catch (Exception ex)
             {
@@ -70,19 +83,25 @@ namespace ApiNexo.Controllers
             }
             
         }
+
         /// <summary>
-        /// 
+        /// Obtiene todos los pedidos relacionados con un producto por su ID.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <param name="id">ID del producto.</param>
+        /// <returns>Lista de pedidos relacionados con el producto.</returns>
+        /// <response code="200">Devuelve la lista de pedidos.</response>
+        /// <response code="404">No se encontraron pedidos.</response>
+        /// <response code="500">Error interno del servidor.</response>
         [HttpGet("{id}/pedidos")]
+        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPedidosPorUsuario(int id)
         {
             try
             {
                 var productos = await _productoQueries.Getall();
-                return Ok(productos);
+                return StatusCode(StatusCodes.Status200OK, productos);
             }
             catch (Exception ex)
             {
@@ -90,24 +109,31 @@ namespace ApiNexo.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error interno al listar productos");
             }
         }
+
         /// <summary>
-        /// 
+        /// Actualiza un producto existente.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="producto"></param>
-        /// <returns></returns>
+        /// <param name="id">ID del producto a actualizar.</param>
+        /// <param name="producto">Objeto producto con los nuevos datos.</param>
+        /// <returns>Resultado de la actualización.</returns>
+        /// <response code="200">El producto fue actualizado correctamente.</response>
+        /// <response code="400">El ID no coincide con el producto enviado.</response>
+        /// <response code="500">Error al actualizar el producto.</response>
         [HttpPut]
+        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Update(int id,[FromBody] Producto producto)
         {
             try
             {
                 if (id != producto.Id)
-                    return StatusCode(StatusCodes.Status404NotFound, "El ID de la URL no coincide con el del producto enviado.");
+                    return StatusCode(StatusCodes.Status400BadRequest, "El ID de la URL no coincide con el del producto enviado.");
                 var rs = await _productoRepository.Update(producto);
                 if (rs)
-                    return Ok("El producto fue actualizado correctamente.");
+                    return StatusCode(StatusCodes.Status200OK, "El producto fue actualizado correctamente.");
                 else
-                    return NotFound("No se encontró el producto con el ID especificado.");
+                    return StatusCode(StatusCodes.Status400BadRequest, "No se encontró el producto con el ID especificado.");
 
             }
             catch (Exception ex)
@@ -117,14 +143,27 @@ namespace ApiNexo.Controllers
 
             }
         }
+
+
         /// <summary>
-        /// 
+        /// Crea un nuevo producto.
         /// </summary>
-        /// <param name="producto"></param>
-        /// <returns></returns>
+        /// <param name="producto">Objeto producto a crear.</param>
+        /// <returns>El producto creado.</returns>
+        /// <response code="201">El producto fue creado correctamente.</response>
+        /// <response code="400">El producto no puede ser nulo.</response>
+        /// <response code="500">Error al crear el producto.</response>
         [HttpPost]
+        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status400BadRequest)]         
+        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Create([FromBody] Producto producto)
         {
+            if (producto == null) 
+            {
+                return StatusCode(StatusCodes.Status400BadRequest,"El producto no puede ser nulo."); 
+            }
+
             try
             {
                 var newProducto = await _productoRepository.Add(producto);
@@ -134,25 +173,31 @@ namespace ApiNexo.Controllers
             {
                 _logger.LogError(ex, "Error al crear el producto");
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al crear el producto");
-
             }
-            
         }
+
+
         /// <summary>
-        /// 
+        /// Elimina un producto por su ID.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">ID del producto a eliminar.</param>
+        /// <returns>Resultado de la eliminación.</returns>
+        /// <response code="200">El producto fue eliminado correctamente.</response>
+        /// <response code="400">No se encontró el producto con el ID especificado.</response>
+        /// <response code="500">Error al eliminar el producto.</response>
         [HttpDelete]
+        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete([FromQuery] int id)
         {
             try
             {
                 var rs = await _productoRepository.Delete(id);
                 if (rs)
-                    return Ok("El producto fue eliminado correctamente.");
+                    return StatusCode(StatusCodes.Status200OK, "El producto fue eliminado correctamente.");
                 else
-                    return NotFound("No se encontró el producto con el ID especificado.");
+                    return StatusCode(StatusCodes.Status400BadRequest, "No se encontró el producto con el ID especificado.");
 
             }
             catch (Exception ex)
