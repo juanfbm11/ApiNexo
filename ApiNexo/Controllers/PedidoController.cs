@@ -44,7 +44,8 @@ namespace ApiNexo.Controllers
         /// <param name="idUsuario">Identificador único del usuario cuyos pedidos se desean consultar.</param>
         /// <returns>Devuelve una lista de pedidos pertenecientes al usuario o un mensaje si no se encuentran resultados.</returns>
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status200OK)]       
+        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ObtenerPedidosPorUsuario([FromQuery] int idUsuario)
         {
@@ -70,6 +71,7 @@ namespace ApiNexo.Controllers
         /// <returns>Devuelve los datos del pedido si existe o un mensaje indicando que no fue encontrado.</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ObtenerPedido(int id)
         {
@@ -77,7 +79,7 @@ namespace ApiNexo.Controllers
             {
                 var pedido = await _pedidoQueries.ObtenerPedidoPorId(id);
                 if (pedido == null)
-                    return StatusCode(StatusCodes.Status404NotFound, "Pedido no encontrado");
+                    return StatusCode(StatusCodes.Status400BadRequest, "Pedido no encontrado");
 
                 return Ok(pedido);
             }
@@ -96,6 +98,7 @@ namespace ApiNexo.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status201Created)]        
         [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status400BadRequest)]
         public IActionResult CrearPedido([FromBody] Pedido pedido)
         {
             try
@@ -152,9 +155,9 @@ namespace ApiNexo.Controllers
         /// <param name="id"></param>
         /// <returns>Devuelve un mensaje de confirmación si el pedido se elimina correctamente o un error si no se encuentra.</returns>
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(IEnumerable<Pedido>), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> EliminarPedido(int id)
         {
             try

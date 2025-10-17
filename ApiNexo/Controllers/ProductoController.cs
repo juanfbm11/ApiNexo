@@ -6,7 +6,9 @@ using System.Net.NetworkInformation;
 
 namespace ApiNexo.Controllers
 {
-    
+    /// <summary>
+    /// Este controlador maneja las operaciones con relacion a los productos
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class ProductoController : ControllerBase
@@ -186,9 +188,9 @@ namespace ApiNexo.Controllers
         /// <response code="400">No se encontró el producto con el ID especificado.</response>
         /// <response code="500">Error al eliminar el producto.</response>
         [HttpDelete]
-        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete([FromQuery] int id)
         {
             try

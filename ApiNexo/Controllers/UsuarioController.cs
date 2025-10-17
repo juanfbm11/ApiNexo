@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ApiNexo.Controllers
 {
     /// <summary>
-    ///     
+    ///  Este controlador maneja todo lo relacionado con los usuarios   
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
@@ -185,9 +185,9 @@ namespace ApiNexo.Controllers
         /// <response code="404">El usuario no fue encontrado en la base de datos.</response>
         /// <response code="500">Error interno del servidor al intentar eliminar el usuario.</response>
         [HttpDelete]
-        [ProducesResponseType(typeof(IEnumerable<Usuario>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(IEnumerable<Usuario>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(IEnumerable<Usuario>), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete(Usuario usuario)
         {
             try

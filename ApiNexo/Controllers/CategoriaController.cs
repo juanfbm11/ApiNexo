@@ -7,12 +7,18 @@ namespace ApiNexo.Controllers
 {
     namespace TuProyecto.Controllers
     {
+        /// <summary>
+        /// 
+        /// </summary>
         [ApiController]
         [Route("api/[controller]")]
         public class CategoriasController : ControllerBase
         {
             private readonly ICategoriaRepository _categoriaRepository;
-
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="categoriaRepository"></param>
             public CategoriasController(ICategoriaRepository categoriaRepository)
             {
                 _categoriaRepository = categoriaRepository;
@@ -24,6 +30,7 @@ namespace ApiNexo.Controllers
             /// <returns>Lista de categorías.</returns>
             /// <response code="200">Devuelve la lista de categorías.</response>
             [HttpGet]
+            [ProducesResponseType(typeof(IEnumerable<Categoria>), StatusCodes.Status200OK)]
             public async Task<ActionResult<IEnumerable<Categoria>>> GetAll()
             {
                 var categorias = await _categoriaRepository.GetAll();
@@ -58,9 +65,9 @@ namespace ApiNexo.Controllers
             /// <response code="400">El ID no coincide con la solicitud.</response>
             /// <response code="404">Categoría no encontrada.</response>
             [HttpPut("{id}")]
-            [ProducesResponseType(typeof(IEnumerable<DetallePedido>), StatusCodes.Status204NoContent)]
-            [ProducesResponseType(typeof(IEnumerable<DetallePedido>), StatusCodes.Status400BadRequest)]
-            [ProducesResponseType(typeof(IEnumerable<DetallePedido>), StatusCodes.Status404NotFound)]
+            [ProducesResponseType(typeof(IEnumerable<Categoria>), StatusCodes.Status204NoContent)]
+            [ProducesResponseType(typeof(IEnumerable<Categoria>), StatusCodes.Status400BadRequest)]
+            [ProducesResponseType(typeof(IEnumerable<Categoria>), StatusCodes.Status404NotFound)]
             public async Task<IActionResult> Update(int id, [FromBody] Categoria categoria)
             {
                 if (id != categoria.IdCategoria)
@@ -80,13 +87,13 @@ namespace ApiNexo.Controllers
             /// <response code="204">Categoría eliminada correctamente.</response>
             /// <response code="404">Categoría no encontrada.</response>
             [HttpDelete("{id}")]
-            
-          
+            [ProducesResponseType(StatusCodes.Status200OK)]
+            [ProducesResponseType(StatusCodes.Status204NoContent)]
+            [ProducesResponseType(StatusCodes.Status404NotFound)]
             public async Task<IActionResult> Delete(int id)
             {
                 var categoria = new Categoria { IdCategoria = id };
                 var eliminado = await _categoriaRepository.Delete(categoria);
-                //return Ok();
 
                 if (!eliminado)
                     return NotFound("La categoría no fue encontrada.");
