@@ -48,6 +48,8 @@ namespace ApiNexo
             builder.Services.AddTransient<IDetallePedidoRepository,DetallePedidoRepository>();
             builder.Services.AddTransient<IDetallePedidoQueries, DetallePedidoQueries>();
 
+            builder.Services.AddTransient<IPagoRepository, PagoRepository>();
+
 
 
 
