@@ -28,6 +28,6 @@ namespace ApiNexo.Models
         /// <summary>
         /// Método de pago utilizado (por ejemplo: efectivo, tarjeta, transferencia).
         /// </summary>
-        public string MetodoPago { get; set; } = string.Empty;
+        public string MetodoPAgo { get; set; } = string.Empty;
     }
 }

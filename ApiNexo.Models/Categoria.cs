@@ -8,7 +8,7 @@ namespace ApiNexo.Models
     /// <summary>
     /// Representa una categoría de productos en el sistema.
     /// </summary>
-    [Table("dbo.Categoria")]
+    [Table("Categoria")]
     public class Categoria
     {
         /// <summary>
@@ -20,16 +20,11 @@ namespace ApiNexo.Models
         /// <summary>
         /// Obtiene o establece el nombre de la categoría.
         /// </summary>
-        public string Nombre { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Obtiene o establece una descripción opcional de la categoría.
-        /// </summary>
-        public string? Descripcion { get; set; }
+        public string Nombre { get; set; } = string.Empty;        
 
         /// <summary>
         /// Obtiene o establece la colección de productos asociados a esta categoría.
         /// </summary>
-        public ICollection<Producto>? Productos { get; set; }
+        public ICollection<Producto>? Producto { get; set; }
     }
 }

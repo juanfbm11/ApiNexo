@@ -47,14 +47,28 @@ namespace ApiNexo.Controllers
             [HttpPost]
             [ProducesResponseType(typeof(IEnumerable<Categoria>), StatusCodes.Status200OK)]
             [ProducesResponseType(typeof(IEnumerable<Categoria>), StatusCodes.Status400BadRequest)]
+            [HttpPost]
             public async Task<ActionResult<Categoria>> Add([FromBody] Categoria categoria)
             {
                 if (categoria == null)
-                    return StatusCode(StatusCodes.Status400BadRequest,"Los datos de la categoría son inválidos.");
+                    return StatusCode(StatusCodes.Status400BadRequest, "Los datos de la categoría son inválidos.");
 
-                var creada = await _categoriaRepository.Add(categoria);
-                return CreatedAtAction(nameof(GetAll), new { id = creada.IdCategoria }, creada);
+                try
+                {
+                    var creada = await _categoriaRepository.Add(categoria);
+                    return CreatedAtAction(nameof(GetAll), new { id = creada.IdCategoria }, creada);
+                }
+                catch (Exception ex)
+                {
+                    // Puedes registrar el error si tienes ILogger
+                    // _logger.LogError(ex, "Error al insertar la categoría.");
+
+                    // Devuelve el mensaje detallado (para desarrollo)
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        $"Error al insertar la categoría: {ex.Message}");
+                }
             }
+
 
             /// <summary>
             /// Actualiza una categoría existente.
@@ -68,16 +82,25 @@ namespace ApiNexo.Controllers
             [ProducesResponseType(typeof(IEnumerable<Categoria>), StatusCodes.Status204NoContent)]
             [ProducesResponseType(typeof(IEnumerable<Categoria>), StatusCodes.Status400BadRequest)]
             [ProducesResponseType(typeof(IEnumerable<Categoria>), StatusCodes.Status404NotFound)]
-            public async Task<IActionResult> Update(int id, [FromBody] Categoria categoria)
+            public async Task<bool> Update(int id, [FromBody] Categoria categoria)
             {
-                if (id != categoria.IdCategoria)
-                    return BadRequest("El ID de la categoría no coincide.");
+                try
+                {
+                    if (categoria == null)
+                        throw new ArgumentNullException(nameof(categoria), "La categoría no puede ser nula.");
 
-                var actualizado = await _categoriaRepository.Update(categoria);
-                if (!actualizado)
-                    return NotFound("La categoría no fue encontrada.");
+                    var resultado = await _categoriaRepository.Update(categoria);
 
-                return NoContent();
+                    if (!resultado)
+                        throw new Exception($"No se encontró la categoría con Id {categoria.IdCategoria} para actualizar.");
+
+                    return true;        
+                }
+                catch (Exception ex)
+                {
+
+                    throw new Exception($"Error al actualizar la categoría: {ex.Message}", ex);
+                }
             }
 
             /// <summary>

@@ -9,14 +9,14 @@ namespace ApiNexo.Models
     /// <summary>
     /// Representa un producto en el sistema.
     /// </summary>
-    [Table("dbo.Producto")]
+    [Table("Producto")]
     public class Producto
     {
         /// <summary>
         /// Obtiene o establece el identificador único del producto.
         /// </summary>
         [Key]
-        public int Id { get; set; }
+        public int IdProducto { get; set; }
 
         /// <summary>
         /// Obtiene o establece el nombre del producto.
@@ -26,7 +26,7 @@ namespace ApiNexo.Models
         /// <summary>
         /// Obtiene o establece el precio del producto.
         /// </summary>
-        public string Precio { get; set; } = string.Empty;
+        public float Precio { get; set; }
 
         /// <summary>
         /// Obtiene o establece la URL de la imagen del producto.
@@ -41,12 +41,12 @@ namespace ApiNexo.Models
         /// <summary>
         /// Obtiene o establece el identificador de la categoría a la que pertenece el producto.
         /// </summary>
-        public int CategoriaId { get; set; }
+        public int IdCategoria { get; set; }
 
         /// <summary>
         /// Obtiene o establece el identificador del usuario del producto.
         /// </summary>
-        public int UsuarioId { get; set; }
+        public int IdUsuario { get; set; }
     }
 }
 

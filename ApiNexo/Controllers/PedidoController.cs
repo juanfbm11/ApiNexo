@@ -136,7 +136,7 @@ namespace ApiNexo.Controllers
                 if (pedidoExistente == null)
                     return StatusCode(StatusCodes.Status400BadRequest,"Pedido no encontrado.");
 
-                pedidoExistente.usuarioId = pedido.usuarioId;
+                pedidoExistente.IdUsuario = pedido.IdUsuario;
                 pedidoExistente.Fecha = pedido.Fecha;
 
                 await _pedidoRepository.ActualizarPedido(pedidoExistente);

@@ -37,12 +37,12 @@ namespace ApiNexo.Repository.Implements
                         if (!categoriaDict.TryGetValue(c.IdCategoria, out var categoria))
                         {
                             categoria = c;
-                            categoria.Productos = new List<Producto>();
+                            categoria.Producto = new List<Producto>();
                             categoriaDict.Add(c.IdCategoria, categoria);
                         }
 
                         if (p != null)
-                            categoria.Productos.Add(p);
+                            categoria.Producto.Add(p);
 
                         return categoria;
                     },

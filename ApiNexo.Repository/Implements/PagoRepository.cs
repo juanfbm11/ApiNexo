@@ -30,8 +30,36 @@ namespace ApiNexo.Repository.Implements
         /// </summary>
         public async Task<Pago> Add(Pago pago)
         {
-            pago.IdPago = await _db.InsertAsync(pago);
-            return pago;
+            try
+            {
+                if (pago == null)
+                    throw new ArgumentNullException(nameof(pago), "El objeto de pago no puede ser nulo.");
+
+                // Validar campos obligatorios
+                if (pago.IdPedido <= 0)
+                    throw new ArgumentException("Debe asociar el pago a un pedido válido.");
+
+                if (string.IsNullOrWhiteSpace(pago.MetodoPAgo))
+                    throw new ArgumentException("Debe especificar un método de pago.");
+
+                if (pago.FechaPago == default)
+                    pago.FechaPago = DateTime.Now; // Asigna fecha actual si no viene desde el cliente
+
+                // Insertar el registro en la base de datos
+                pago.IdPago = await _db.InsertAsync(pago);
+
+                // Validar que se haya insertado correctamente
+                if (pago.IdPago <= 0)
+                    throw new Exception("No se pudo insertar el registro del pago.");
+
+                return pago;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al insertar el pago: {ex.Message}", ex);
+            }
         }
+
+
     }
 }

@@ -20,7 +20,7 @@ namespace ApiNexo.Controllers
         /// <param name="repo">Repositorio de DetallePedido</param>
         public DetallePedidoController(IDetallePedidoRepository repo)
         {
-            _repo = repo;
+            _repo = repo ?? throw new ArgumentNullException(nameof(repo));
         }
         /// <summary>
         /// Obtiene todos los registros de detalle de pedido existentes.
@@ -43,8 +43,18 @@ namespace ApiNexo.Controllers
         [ProducesResponseType(typeof(IEnumerable<DetallePedido>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Post(DetallePedido detalle)
         {
-            var result = await _repo.Add(detalle);
-            return Ok(result);
+            if (detalle == null)
+                return StatusCode(StatusCodes.Status400BadRequest, "Los datos del detalle del pedido son inválidos.");
+            try
+            {
+                var rs = await _repo.Add(detalle);
+                return CreatedAtAction(nameof(Get), new { id = rs.IdDetalle }, rs);
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error al registrar el detalle del pedido: {ex.Message}");
+            }
         }
     }
 }

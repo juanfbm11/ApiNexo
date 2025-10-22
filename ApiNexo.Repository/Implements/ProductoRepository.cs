@@ -22,7 +22,7 @@ namespace ApiNexo.Repository.Implements
             if (producto == null)
                 throw new ArgumentNullException(nameof(producto));
             var id = await _db.InsertAsync(producto);
-            producto.Id = (int)id;
+            producto.IdProducto = (int)id;
             return producto;
         }
 

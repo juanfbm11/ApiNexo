@@ -26,7 +26,7 @@ namespace ApiNexo.Models
         /// <summary>
         /// Obtiene o establece el identificador del usuario que realizó el pedido.
         /// </summary>
-        public int usuarioId { get; set; }
+        public int IdUsuario { get; set; }
     }
 }
 

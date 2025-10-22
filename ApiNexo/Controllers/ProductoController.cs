@@ -129,7 +129,7 @@ namespace ApiNexo.Controllers
         {
             try
             {
-                if (id != producto.Id)
+                if (id != producto.IdProducto)
                     return StatusCode(StatusCodes.Status400BadRequest, "El ID de la URL no coincide con el del producto enviado.");
                 var rs = await _productoRepository.Update(producto);
                 if (rs)
@@ -169,7 +169,7 @@ namespace ApiNexo.Controllers
             try
             {
                 var newProducto = await _productoRepository.Add(producto);
-                return CreatedAtAction(nameof(Get), new { id = newProducto.Id }, newProducto);
+                return CreatedAtAction(nameof(Get), new { id = newProducto.IdProducto }, newProducto);
             }
             catch (Exception ex)
             {
