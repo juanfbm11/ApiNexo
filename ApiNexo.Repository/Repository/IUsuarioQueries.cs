@@ -11,6 +11,8 @@ namespace ApiNexo.Repository.Repository
         Task<IEnumerable<Usuario>> GetAll();
         Task<Usuario> GetById(int id);
 
+        Task<Usuario> GetByCorreo(string correo);
+
 
     }
 }

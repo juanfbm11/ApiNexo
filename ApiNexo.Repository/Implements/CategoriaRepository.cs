@@ -63,6 +63,11 @@ namespace ApiNexo.Repository.Implements
         {
             return await _db.DeleteAsync(categoria);
         }
+
+        public async Task<Categoria> GetById(int id)
+        {
+            return await _db.GetAsync<Categoria>(id);
+        }
     }
 }
 

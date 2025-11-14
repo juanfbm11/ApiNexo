@@ -12,6 +12,7 @@ namespace ApiNexo.Repository.Repository
         Task<Categoria> Add(Categoria categoria);
         Task<bool> Update(Categoria categoria);
         Task<bool> Delete(Categoria categoria);
+        Task<Categoria> GetById(int id);
     }
 }
 

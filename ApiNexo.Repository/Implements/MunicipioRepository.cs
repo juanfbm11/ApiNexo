@@ -1,5 +1,6 @@
 ﻿using ApiNexo.Models;
 using ApiNexo.Repository.Repository;
+using Dapper;
 using Dapper.Contrib.Extensions;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace ApiNexo.Repository.Implements
             if(municipio == null)
                 throw new ArgumentNullException(nameof(municipio));
             var id = await _db.InsertAsync(municipio);
-            municipio.Id = (int)id;
+            municipio.IdMunicipio = (int)id;
             return municipio;
         }
 
@@ -39,6 +40,13 @@ namespace ApiNexo.Repository.Implements
             if(municipio == null)
                 return false;
             return await _db.DeleteAsync(municipio);
+        }
+
+        public async Task<Municipio?> GetByIdAsync(int id)
+        {
+            var sql = "SELECT * FROM Municipio WHERE IdMunicipio = @Id";
+            var result = await _db.QueryFirstOrDefaultAsync<Municipio>(sql, new { Id = id });
+            return result;
         }
     }
 }

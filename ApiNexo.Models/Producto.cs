@@ -1,8 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Text;
+using Xunit;
 
 namespace ApiNexo.Models
 {
@@ -37,16 +39,21 @@ namespace ApiNexo.Models
         /// Obtiene o establece la cantidad disponible del producto.
         /// </summary>
         public int Cantidad { get; set; }
+        /// <summary>
+        /// aca se agrega la carateristicas de cada producto.
+        /// </summary>
+        public string Descripcion { get; set; } = string.Empty;
 
         /// <summary>
         /// Obtiene o establece el identificador de la categoría a la que pertenece el producto.
         /// </summary>
+        
         public int IdCategoria { get; set; }
 
-        /// <summary>
-        /// Obtiene o establece el identificador del usuario del producto.
-        /// </summary>
         public int IdUsuario { get; set; }
+
+
+
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using ApiNexo.Models;
 using ApiNexo.Repository.Repository;
+using Dapper;
 using Dapper.Contrib.Extensions;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,13 @@ namespace ApiNexo.Repository.Implements
 
         public async Task<Producto> Add(Producto producto)
         {
-            if (producto == null)
-                throw new ArgumentNullException(nameof(producto));
-            var id = await _db.InsertAsync(producto);
-            producto.IdProducto = (int)id;
+            var sql = @"
+        INSERT INTO Producto (Nombre, Precio, Imagen, Cantidad, Descripcion, IdCategoria, IdUsuario)
+        VALUES (@Nombre, @Precio, @Imagen, @Cantidad, @Descripcion, @IdCategoria, @IdUsuario);
+        SELECT CAST(SCOPE_IDENTITY() as int);";
+
+            var id = await _db.QuerySingleAsync<int>(sql, producto);
+            producto.IdProducto = id;
             return producto;
         }
 

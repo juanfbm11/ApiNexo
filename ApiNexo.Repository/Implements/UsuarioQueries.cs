@@ -1,5 +1,6 @@
 ﻿using ApiNexo.Models;
 using ApiNexo.Repository.Repository;
+using Dapper;
 using Dapper.Contrib.Extensions;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace ApiNexo.Repository.Implements
         {
             try
             {
-                usuario.Id = await _db.InsertAsync(usuario);
+                usuario.IdUsuario = await _db.InsertAsync(usuario);
                 return usuario;
             }
             catch (Exception ex)
@@ -43,15 +44,28 @@ namespace ApiNexo.Repository.Implements
             return await _db.GetAllAsync<Usuario>();
         }
 
-        public async Task<Usuario> GetById(int id)
+        public Task<Usuario> GetByCorreo(string correo)
         {
-            return await _db.GetAsync<Usuario>(id);
+            var sql = "SELECT * FROM Usuario WHERE Correo = @Correo";
+            return _db.QueryFirstOrDefaultAsync<Usuario>(sql, new { Correo = correo });
+        }
+
+        public async Task<Usuario> GetById(int idusuario)
+        {
+            var sql = "SELECT * FROM Usuario WHERE IdUsuario = @Id";
+            var usuario = await _db.QueryFirstOrDefaultAsync<Usuario>(sql, new { Id = idusuario });
+            return usuario;
         }
 
         public async Task<bool> Update(Usuario usuario)
         {
             return await _db.UpdateAsync(usuario);
         }
+
+        
+
+       
     }
 }
+
 

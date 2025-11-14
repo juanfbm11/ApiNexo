@@ -11,8 +11,7 @@ namespace ApiNexo.Repository.Repository
         Task<Usuario> Add(Usuario usuario);
         Task<bool> Update(Usuario usuario);
         Task<bool> Delete(Usuario usuario);
-
-
+        Task <Usuario> GetById(int idUsuario);
 
     }
 }

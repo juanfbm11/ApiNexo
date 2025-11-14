@@ -1,4 +1,5 @@
 ﻿using ApiNexo.Models;
+using ApiNexo.Repository.Implements;
 using ApiNexo.Repository.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,20 +14,36 @@ namespace ApiNexo.Controllers
     [ApiController]
     public class ProductoController : ControllerBase
     {
-       private readonly IProductoRepository _productoRepository;
+       private readonly IUsuarioQueries _usuarioQueries;
+        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IProductoRepository _productoRepository;
          private readonly IProductoQueries _productoQueries;
+         private readonly ICategoriaRepository _categoriaRepository;
         private readonly ILogger<ProductoController> _logger;
+
 
         /// <summary>
         /// Inicializa una nueva instancia de la clase <see cref="ProductoController"/>.
         /// </summary>
         /// <param name="productoRepository">Repositorio de productos.</param>
+        /// <param name="usuarioQueries">Consultas de usuarios.</param>
+        /// <param name="usuarioRepository">Repositorio de usuarios.</param>
         /// <param name="productoQueries">Consultas de productos.</param>
+        /// <param name="categoriaRepository">Repositorio de categorias.</param>
         /// <param name="logger">Logger para registrar información y errores.</param>
-        public ProductoController(IProductoRepository productoRepository, IProductoQueries productoQueries, ILogger<ProductoController> logger)
+        public ProductoController(
+            IUsuarioRepository usuarioRepository,
+            IUsuarioQueries usuarioQueries,
+            IProductoRepository productoRepository,
+            IProductoQueries productoQueries,
+            ICategoriaRepository categoriaRepository,
+            ILogger<ProductoController> logger)
         {
+            _usuarioQueries = usuarioQueries ?? throw new ArgumentNullException(nameof(usuarioQueries));
+            _usuarioRepository = usuarioRepository ?? throw new ArgumentNullException(nameof(usuarioRepository));            
             _productoRepository = productoRepository ?? throw new ArgumentNullException(nameof(productoRepository));
             _productoQueries = productoQueries ?? throw new ArgumentNullException(nameof(productoQueries));
+            _categoriaRepository = categoriaRepository ?? throw new ArgumentNullException(nameof(categoriaRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         }
@@ -88,8 +105,7 @@ namespace ApiNexo.Controllers
 
         /// <summary>
         /// Obtiene todos los pedidos relacionados con un producto por su ID.
-        /// </summary>
-        /// <param name="id">ID del producto.</param>
+        /// </summary>       
         /// <returns>Lista de pedidos relacionados con el producto.</returns>
         /// <response code="200">Devuelve la lista de pedidos.</response>
         /// <response code="404">No se encontraron pedidos.</response>
@@ -98,7 +114,7 @@ namespace ApiNexo.Controllers
         [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPedidosPorUsuario(int id)
+        public async Task<IActionResult> GetPedidosPorUsuario()
         {
             try
             {
@@ -156,14 +172,14 @@ namespace ApiNexo.Controllers
         /// <response code="400">El producto no puede ser nulo.</response>
         /// <response code="500">Error al crear el producto.</response>
         [HttpPost]
-        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status400BadRequest)]         
-        [ProducesResponseType(typeof(IEnumerable<Producto>), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Create([FromBody] Producto producto)
         {
-            if (producto == null) 
+            if (producto == null)
             {
-                return StatusCode(StatusCodes.Status400BadRequest,"El producto no puede ser nulo."); 
+                return StatusCode(StatusCodes.Status400BadRequest, "El producto no puede ser nulo.");
             }
 
             try
@@ -177,8 +193,6 @@ namespace ApiNexo.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al crear el producto");
             }
         }
-
-
         /// <summary>
         /// Elimina un producto por su ID.
         /// </summary>

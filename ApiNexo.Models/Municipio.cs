@@ -15,7 +15,7 @@ namespace ApiNexo.Models
         /// Obtiene o establece el identificador único del municipio.
         /// </summary>
         [Key]
-        public int Id { get; set; }
+        public int IdMunicipio { get; set; }
 
         /// <summary>
         /// Obtiene o establece el nombre del municipio.

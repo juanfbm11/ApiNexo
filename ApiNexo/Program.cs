@@ -39,13 +39,13 @@ namespace ApiNexo
             builder.Services.AddTransient<IProductoRepository, ProductoRepository>();
             builder.Services.AddTransient<IProductoQueries, ProductoQueries>();
 
-            builder.Services.AddTransient<IMunicipioRepository,MunicipioRepository >();
+            builder.Services.AddTransient<IMunicipioRepository, MunicipioRepository>();
             builder.Services.AddTransient<IMunicipioQueries, MunicipioQueries>();
 
             builder.Services.AddTransient<ICategoriaQueries, CategoriaQueries>();
             builder.Services.AddTransient<ICategoriaRepository, CategoriaRepository>();
 
-            builder.Services.AddTransient<IDetallePedidoRepository,DetallePedidoRepository>();
+            builder.Services.AddTransient<IDetallePedidoRepository, DetallePedidoRepository>();
             builder.Services.AddTransient<IDetallePedidoQueries, DetallePedidoQueries>();
 
             builder.Services.AddTransient<IPagoRepository, PagoRepository>();
@@ -63,8 +63,15 @@ namespace ApiNexo
 
             });
 
-
-            
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
 
             var app = builder.Build();
 
@@ -75,8 +82,11 @@ namespace ApiNexo
                 app.UseSwaggerUI();
             }
 
+            app.UseStaticFiles();
+
             app.UseAuthorization();
 
+            app.UseCors("AllowAll");
 
             app.MapControllers();
 

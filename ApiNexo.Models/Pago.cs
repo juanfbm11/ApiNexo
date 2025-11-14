@@ -18,6 +18,7 @@ namespace ApiNexo.Models
         /// <summary>
         /// Identificador del pedido asociado a este pago.
         /// </summary>
+       
         public int IdPedido { get; set; }
 
         /// <summary>
@@ -28,6 +29,6 @@ namespace ApiNexo.Models
         /// <summary>
         /// Método de pago utilizado (por ejemplo: efectivo, tarjeta, transferencia).
         /// </summary>
-        public string MetodoPAgo { get; set; } = string.Empty;
+        public string MetodoPago { get; set; } = string.Empty;
     }
 }

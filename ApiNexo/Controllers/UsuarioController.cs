@@ -1,4 +1,5 @@
 ﻿using ApiNexo.Models;
+using ApiNexo.Repository.Implements;
 using ApiNexo.Repository.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@ namespace ApiNexo.Controllers
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioQueries _usuarioQueries;
-        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IUsuarioRepository _usuarioRepository;       
         private readonly ILogger<UsuarioController> _logger;
         /// <summary>
         /// 
@@ -115,17 +116,63 @@ namespace ApiNexo.Controllers
         {
             try
             {
-                var newUsurio = await _usuarioRepository.Add(usuario);
-                return CreatedAtAction(nameof(Get), new { id = newUsurio.Id });
+                
+               
 
+                // Insertar usuario
+                var nuevoUsuario = await _usuarioRepository.Add(usuario);
+
+                // Retornar respuesta con ubicación del recurso creado
+                return CreatedAtAction(nameof(Get), new { id = nuevoUsuario.IdUsuario }, nuevoUsuario);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al crear el usuario");
                 return StatusCode(StatusCodes.Status500InternalServerError, "Ocurrió un error al crear el usuario");
+            }
 
+        }
+
+
+        /// <summary>
+        /// Verifica las credenciales de un usuario (correo y contraseña)
+        /// </summary>
+        /// <param name="login">Objeto con el correo y contraseña del usuario</param>
+        /// <returns>
+        /// Devuelve 200 (OK) si las credenciales son válidas, 
+        /// 401 (Unauthorized) si son incorrectas.
+        /// </returns>
+        [HttpPost("login")]
+        [ProducesResponseType(typeof(Usuario), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Login([FromBody] Login login)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(login.Correo) || string.IsNullOrWhiteSpace(login.Contrasena))
+                {
+                    return BadRequest("Correo y contraseña son requeridos.");
+                }
+
+                // Buscar el usuario por correo
+                var usuario = await _usuarioQueries.GetByCorreo(login.Correo);
+
+                if (usuario == null || usuario.Contrasena != login.Contrasena)
+                {
+                    return Unauthorized("Credenciales inválidas.");
+                }
+
+                return Ok(usuario);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al intentar iniciar sesión con {correo}", login.Correo);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocurrió un error al iniciar sesión.");
             }
         }
+
+
         /// <summary>
         /// Actualiza la información de un usuario existente en el sistema.
         /// </summary>
@@ -151,7 +198,7 @@ namespace ApiNexo.Controllers
         {
             try
             {
-                if (id != usuario.Id)
+                if (id != usuario.IdUsuario)
                     return StatusCode(StatusCodes.Status404NotFound, "El ID de la URL no coincide con el del usuario enviado.");
 
                 var rs = await _usuarioRepository.Update(usuario);

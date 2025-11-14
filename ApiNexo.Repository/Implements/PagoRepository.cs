@@ -39,7 +39,7 @@ namespace ApiNexo.Repository.Implements
                 if (pago.IdPedido <= 0)
                     throw new ArgumentException("Debe asociar el pago a un pedido válido.");
 
-                if (string.IsNullOrWhiteSpace(pago.MetodoPAgo))
+                if (string.IsNullOrWhiteSpace(pago.MetodoPago))
                     throw new ArgumentException("Debe especificar un método de pago.");
 
                 if (pago.FechaPago == default)
